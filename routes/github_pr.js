@@ -101,7 +101,7 @@ module.exports = function(runtime) {
       runtime.graph
     );
 
-    graph.tasks = graph.tasks.map(function(task) {
+    graph.tasks = (graph.tasks || []).map(function(task) {
       var task = merge(
         // strict overrides
         {
