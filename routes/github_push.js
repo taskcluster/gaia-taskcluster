@@ -154,7 +154,7 @@ module.exports = function(runtime) {
       return task.taskId;
     });
 
-    var id = slugid.v4();
+    var id = slugid.nice();
     runtime.log('create graph', { id: id, graph: graph });
 
     var graphStatus =

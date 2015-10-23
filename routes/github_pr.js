@@ -164,7 +164,7 @@ module.exports = function(runtime) {
 
     // finally use the factory to fill in any required fields that have
     // defaults...
-    var id = slugid.v4();
+    var id = slugid.nice();
     runtime.log('create graph', { id: id, graph: graph });
 
     try {
