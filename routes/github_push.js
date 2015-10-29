@@ -144,7 +144,7 @@ module.exports = function(runtime) {
                             commit;
 
       task.task.routes.push(treeherderRoute);
-      task.task.scopes.push(treeherderRoute);
+      task.task.scopes.push('queue:route:' + treeherderRoute);
 
       return task;
     });
