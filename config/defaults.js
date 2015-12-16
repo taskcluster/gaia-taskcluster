@@ -89,7 +89,11 @@ module.exports = {
     configUri: env('TREEHEDER_PROJECT_CONFIG_URI'),
 
     // base location for treeherder services...
-    baseUrl: env('TREEHERDER_URL') || ''
+    baseUrl: env('TREEHERDER_URL') || '',
+
+    // Hawk credentials for treeherder API
+    clientId: env('TREEHERDER_CLIENT_ID'),
+    secret: env('TREEHERDER_SECRET')
   },
 
   github: {

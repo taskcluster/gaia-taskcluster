@@ -59,8 +59,8 @@ module.exports = function(runtime) {
 
     // submit the resultset to treeherder
     var thRepository = new TreeherderProject(project.name, {
-      consumerKey: project.consumerKey,
-      consumerSecret: project.consumerSecret,
+      clientId: runtime.treeherder.clientId,
+      secret: runtime.treeherder.secret,
       baseUrl: runtime.treeherder.baseUrl
     });
 

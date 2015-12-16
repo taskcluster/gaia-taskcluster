@@ -147,8 +147,8 @@ module.exports = function(runtime) {
     });
 
     var treeherderRepo = new TreeherderRepo(project.name, {
-      consumerKey: project.consumerKey,
-      consumerSecret: project.consumerSecret,
+      clientId: runtime.treeherder.clientId,
+      secret: runtime.treeherder.secret,
       baseUrl: runtime.treeherder.baseUrl
     });
 
