@@ -57,11 +57,20 @@ module.exports = function(runtime) {
       push_timestamp: (new Date(body.head_commit.timestamp).valueOf()) / 1000
     };
 
-    // submit the resultset to treeherder
+    // submit the resultset to treeherder production
     var thRepository = new TreeherderProject(project.name, {
       clientId: runtime.treeherder.clientId,
       secret: runtime.treeherder.secret,
       baseUrl: runtime.treeherder.baseUrl
+    });
+
+    yield thRepository.postResultset([resultset]);
+
+    // Submit to staging
+    thRepository = new TreeherderProject(project.name, {
+      clientId: runtime.treeherderStaging.clientId,
+      secret: runtime.treeherderStaging.secret,
+      baseUrl: runtime.treeherderStaging.baseUrl
     });
 
     yield thRepository.postResultset([resultset]);
@@ -138,13 +147,14 @@ module.exports = function(runtime) {
       task.task.routes.push(runtime.route);
       task.task.scopes.push('queue:route:' + runtime.route);
 
-      // Treeherder
-      var treeherderRoute = runtime.taskclusterTreeherder.route + '.' +
-                            project.name + '.' +
-                            commit;
-
-      task.task.routes.push(treeherderRoute);
-      task.task.scopes.push('queue:route:' + treeherderRoute);
+      ["tc-treeherder", "tc-treeherder-stage"].forEach(function(route) {
+        task.task.routes.push([
+          route,
+          "v2",
+          userName + "/" + project.name,
+          commit
+        ].join("."));
+      });
 
       return task;
     });

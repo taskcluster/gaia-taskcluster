@@ -96,6 +96,19 @@ module.exports = {
     secret: env('TREEHERDER_SECRET')
   },
 
+  treeherderStaging: {
+    // where to pull the treeherder configuration projects from...
+    // XXX: Soon this will be a store
+    configUri: env('TREEHEDER_PROJECT_CONFIG_URI'),
+
+    // base location for treeherder services...
+    baseUrl: env('TREEHERDER_STAGING_URL') || '',
+
+    // Hawk credentials for treeherder API
+    clientId: env('TREEHERDER_STAGING_CLIENT_ID'),
+    secret: env('TREEHERDER_STAGING_SECRET')
+  },
+
   github: {
     rawUrl: 'https://raw.githubusercontent.com/',
     // XXX: soon this will go away in favor or per-project configuration
