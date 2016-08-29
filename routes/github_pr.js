@@ -161,23 +161,28 @@ module.exports = function(runtime) {
     resultset.aggregate_id = 'pull/' + number;
     resultset.revision_hash = commit;
 
-    // Submit to production
-    var treeherderRepo = new TreeherderRepo(project.name, {
-      clientId: runtime.treeherder.clientId,
-      secret: runtime.treeherder.secret,
-      baseUrl: runtime.treeherder.baseUrl
-    });
+    if (runtime.treeherder.baseUrl) {
+      var treeherderRepo = new TreeherderRepo(project.name, {
+        clientId: runtime.treeherder.clientId,
+        secret: runtime.treeherder.secret,
+        baseUrl: runtime.treeherder.baseUrl
+      });
 
-    yield treeherderRepo.postResultset([resultset]);
+      yield treeherderRepo.postResultset([resultset]);
+    }
 
-    // Submit to staging
-    treeherderRepo = new TreeherderRepo(project.name, {
-      clientId: runtime.treeherderStaging.clientId,
-      secret: runtime.treeherderStaging.secret,
-      baseUrl: runtime.treeherderStaging.baseUrl
-    });
+    // Submission to staging is currently disabled in favor of treeherder's
+    // automatic resultset creation.  To re-enable add TREEHERDER_STAGING_URL
+    // to the app environment
+    if (runtime.treeherderStaging.baseUrl) {
+      treeherderRepo = new TreeherderRepo(project.name, {
+        clientId: runtime.treeherderStaging.clientId,
+        secret: runtime.treeherderStaging.secret,
+        baseUrl: runtime.treeherderStaging.baseUrl
+      });
 
-    yield treeherderRepo.postResultset([resultset]);
+      yield treeherderRepo.postResultset([resultset]);
+    }
 
     // finally use the factory to fill in any required fields that have
     // defaults...
