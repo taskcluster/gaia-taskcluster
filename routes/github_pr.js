@@ -131,12 +131,15 @@ module.exports = function(runtime) {
       // Gaia routes.
       task.task.routes.push(runtime.route);
 
-      // Treeherder
-      var treeherderRoute = runtime.taskclusterTreeherder.route + '.' +
-                            project.name + '.' +
-                            commit;
-
-      task.task.routes.push(treeherderRoute);
+      ["tc-treeherder", "tc-treeherder-stage"].forEach(function(route) {
+        task.task.routes.push([
+          route,
+          "v2",
+          userName + "/" + project.name,
+          commit,
+          number
+        ].join("."));
+      });
 
       return task;
     });
@@ -144,12 +147,6 @@ module.exports = function(runtime) {
     graph = GraphFactory.create(jsTemplate(graph, params));
     var createdTasks = graph.tasks.map(function(task) {
       return task.taskId;
-    });
-
-    var treeherderRepo = new TreeherderRepo(project.name, {
-      clientId: runtime.treeherder.clientId,
-      secret: runtime.treeherder.secret,
-      baseUrl: runtime.treeherder.baseUrl
     });
 
     // build the treeherder resultset
@@ -163,6 +160,23 @@ module.exports = function(runtime) {
     resultset.author = owner;
     resultset.aggregate_id = 'pull/' + number;
     resultset.revision_hash = commit;
+
+    // Submit to production
+    var treeherderRepo = new TreeherderRepo(project.name, {
+      clientId: runtime.treeherder.clientId,
+      secret: runtime.treeherder.secret,
+      baseUrl: runtime.treeherder.baseUrl
+    });
+
+    yield treeherderRepo.postResultset([resultset]);
+
+    // Submit to staging
+    treeherderRepo = new TreeherderRepo(project.name, {
+      clientId: runtime.treeherderStaging.clientId,
+      secret: runtime.treeherderStaging.secret,
+      baseUrl: runtime.treeherderStaging.baseUrl
+    });
+
     yield treeherderRepo.postResultset([resultset]);
 
     // finally use the factory to fill in any required fields that have
