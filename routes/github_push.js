@@ -57,23 +57,28 @@ module.exports = function(runtime) {
       push_timestamp: (new Date(body.head_commit.timestamp).valueOf()) / 1000
     };
 
-    // submit the resultset to treeherder production
-    var thRepository = new TreeherderProject(project.name, {
-      clientId: runtime.treeherder.clientId,
-      secret: runtime.treeherder.secret,
-      baseUrl: runtime.treeherder.baseUrl
-    });
+    if (runtime.treeherder.baseUrl) {
+      var thRepository = new TreeherderProject(project.name, {
+        clientId: runtime.treeherder.clientId,
+        secret: runtime.treeherder.secret,
+        baseUrl: runtime.treeherder.baseUrl
+      });
 
-    yield thRepository.postResultset([resultset]);
+      yield thRepository.postResultset([resultset]);
+    }
 
-    // Submit to staging
-    thRepository = new TreeherderProject(project.name, {
-      clientId: runtime.treeherderStaging.clientId,
-      secret: runtime.treeherderStaging.secret,
-      baseUrl: runtime.treeherderStaging.baseUrl
-    });
+    // Submission to staging is currently disabled in favor of treeherder's
+    // automatic resultset creation.  To re-enable add TREEHERDER_STAGING_URL
+    // to the app environment
+    if (runtime.treeherderStaging.baseUrl) {
+      thRepository = new TreeherderProject(project.name, {
+        clientId: runtime.treeherderStaging.clientId,
+        secret: runtime.treeherderStaging.secret,
+        baseUrl: runtime.treeherderStaging.baseUrl
+      });
 
-    yield thRepository.postResultset([resultset]);
+      yield thRepository.postResultset([resultset]);
+    }
 
     var graph = JSON.parse(
       yield pushContent(runtime.githubApi, body, TASKGRAPH_PATH)
