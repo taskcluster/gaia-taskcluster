@@ -161,16 +161,6 @@ module.exports = function(runtime) {
     resultset.aggregate_id = 'pull/' + number;
     resultset.revision_hash = commit;
 
-    if (runtime.treeherder.baseUrl) {
-      var treeherderRepo = new TreeherderRepo(project.name, {
-        clientId: runtime.treeherder.clientId,
-        secret: runtime.treeherder.secret,
-        baseUrl: runtime.treeherder.baseUrl
-      });
-
-      yield treeherderRepo.postResultset([resultset]);
-    }
-
     // finally use the factory to fill in any required fields that have
     // defaults...
     var id = slugid.nice();

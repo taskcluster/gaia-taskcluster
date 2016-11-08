@@ -57,16 +57,6 @@ module.exports = function(runtime) {
       push_timestamp: (new Date(body.head_commit.timestamp).valueOf()) / 1000
     };
 
-    if (runtime.treeherder.baseUrl) {
-      var thRepository = new TreeherderProject(project.name, {
-        clientId: runtime.treeherder.clientId,
-        secret: runtime.treeherder.secret,
-        baseUrl: runtime.treeherder.baseUrl
-      });
-
-      yield thRepository.postResultset([resultset]);
-    }
-
     var graph = JSON.parse(
       yield pushContent(runtime.githubApi, body, TASKGRAPH_PATH)
     );
