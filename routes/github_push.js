@@ -67,19 +67,6 @@ module.exports = function(runtime) {
       yield thRepository.postResultset([resultset]);
     }
 
-    // Submission to staging is currently disabled in favor of treeherder's
-    // automatic resultset creation.  To re-enable add TREEHERDER_STAGING_URL
-    // to the app environment
-    if (runtime.treeherderStaging.baseUrl) {
-      thRepository = new TreeherderProject(project.name, {
-        clientId: runtime.treeherderStaging.clientId,
-        secret: runtime.treeherderStaging.secret,
-        baseUrl: runtime.treeherderStaging.baseUrl
-      });
-
-      yield thRepository.postResultset([resultset]);
-    }
-
     var graph = JSON.parse(
       yield pushContent(runtime.githubApi, body, TASKGRAPH_PATH)
     );

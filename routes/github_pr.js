@@ -171,19 +171,6 @@ module.exports = function(runtime) {
       yield treeherderRepo.postResultset([resultset]);
     }
 
-    // Submission to staging is currently disabled in favor of treeherder's
-    // automatic resultset creation.  To re-enable add TREEHERDER_STAGING_URL
-    // to the app environment
-    if (runtime.treeherderStaging.baseUrl) {
-      treeherderRepo = new TreeherderRepo(project.name, {
-        clientId: runtime.treeherderStaging.clientId,
-        secret: runtime.treeherderStaging.secret,
-        baseUrl: runtime.treeherderStaging.baseUrl
-      });
-
-      yield treeherderRepo.postResultset([resultset]);
-    }
-
     // finally use the factory to fill in any required fields that have
     // defaults...
     var id = slugid.nice();
